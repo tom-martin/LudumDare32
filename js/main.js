@@ -43,6 +43,8 @@ var input = new Input();
 var camera = new Camera(player, threeCamera);
 var collision = new Collision();
 
+var spray = new Spray(scene);
+
 var npcs = [];
 for(var i = 0; i < 100; i++) {
     npcs.push(new Npc(scene));
@@ -66,9 +68,12 @@ function render() {
     requestAnimationFrame(render);
 
     player.update(input, tick);
+
     for(var i in npcs) {
         npcs[i].update(player, tick);
     }
+
+    spray.update(threeCamera, player, npcs, input, tick);
 
     collision.update(player, npcs, buildings, tick);
 

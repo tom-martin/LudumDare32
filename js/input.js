@@ -8,6 +8,12 @@ function Input() {
 
     this.debugDown = false;
 
+
+    var raycaster = new THREE.Raycaster();
+    var mouse = new THREE.Vector2();
+
+    this.mouseDown = false;
+
     this.onKeyChange = function(e, down) {
         if(e.keyCode==87) {
             self.forwardDown = down;
@@ -27,8 +33,19 @@ function Input() {
         }
     }
 
+    this.onMouseMove = function(e, down) {
+        mouse.set( ( event.clientX / window.innerWidth ) * 2 - 1, - ( event.clientY / window.innerHeight ) * 2 + 1 );
+    }
+
+    this.onMouseChange = function(e, down) {
+        self.mouseDown = down;
+    }
+
     document.addEventListener("keydown", function(e) { self.onKeyChange(e, true); });
     document.addEventListener("keyup", function(e) { self.onKeyChange(e, false  ); });
+    document.addEventListener("mousemove", function(e) { self.onMouseMove(e); });
+    document.addEventListener("mouseup", function(e) { self.onMouseChange(e, false); });
+    document.addEventListener("mousedown", function(e) { self.onMouseChange(e, true); });
 
     var dir = new THREE.Vector3(0, 0, 0);
     this.getDirection = function() {
@@ -49,5 +66,12 @@ function Input() {
         dir.normalize();
 
         return dir;
+    }
+
+    var ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+    var mouseGroundPos = new THREE.Vector3();
+    this.getMouseGroundPosition = function(camera) {
+        raycaster.setFromCamera(mouse, camera);
+        return raycaster.ray.intersectPlane(ground, mouseGroundPos);
     }
 }
