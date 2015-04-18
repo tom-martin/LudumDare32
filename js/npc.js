@@ -1,7 +1,8 @@
+var npcGeometry = new THREE.BoxGeometry( 1, 2, 1 );
+var npcMaterial = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
+
 function Npc(scene) {
-	var geometry = new THREE.BoxGeometry( 1, 2, 1 );
-	var material = new THREE.MeshLambertMaterial( {color: 0x00ff00} );
-	var mesh = new THREE.Mesh( geometry, material );
+	var mesh = new THREE.Mesh( npcGeometry, npcMaterial );
 	scene.add( mesh );
 	this.position = new THREE.Vector3((Math.random()*500)-250, 0, (Math.random()*500)-250);
 	this.nextPosition = new THREE.Vector3();
