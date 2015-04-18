@@ -21,15 +21,19 @@ var light1 = new THREE.DirectionalLight(0xffffff, 1);
 light1.position.set(1,1,1);
 scene.add(light1);
 
-var light2 = new THREE.DirectionalLight(0xffffff, 0.5);
+var light2 = new THREE.DirectionalLight(0xffffff, 0.7);
 light2.position.set(0,1,0);
 scene.add(light2);
 
-var light3 = new THREE.DirectionalLight(0xffffff, 0.2);
+var light3 = new THREE.DirectionalLight(0xffffff, 0.4);
 light3.position.set(1,0,-1);
 scene.add(light3);
 
-scene.add(new THREE.AmbientLight( 0x404040 ));
+var light4 = new THREE.DirectionalLight(0xffffff, 0.4);
+light4.position.set(-1,0,-1);
+scene.add(light4);
+
+// scene.add(new THREE.AmbientLight( 0x404040 ));
 
 var lastFrameTime = Date.now();
 
