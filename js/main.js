@@ -44,12 +44,19 @@ var camera = new Camera(player, threeCamera);
 var collision = new Collision();
 
 var npcs = [];
-for(var i = 0; i < 1000; i++) {
+for(var i = 0; i < 500; i++) {
     npcs.push(new Npc(scene));
 }
 
-var building = new Building(5, 5, scene);
-var buildings = [building];
+var buildings = [];
+
+for(var x = -250; x < 250; x+=5) {
+    for(var z = -250; z < 250; z+=5) {
+        if(Math.random() < 0.2) {
+            buildings.push(new Building(x, z, 5, 5, scene));
+        }
+    }
+}
 
 function render() {
     stats.begin();
@@ -64,6 +71,10 @@ function render() {
     }
 
     collision.update(player, npcs, buildings, tick);
+
+    for(var i in buildings) {
+        buildings[i].update(player, tick);
+    }
 
     camera.update(player, tick);
 
