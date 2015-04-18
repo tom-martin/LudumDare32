@@ -48,7 +48,8 @@ for(var i = 0; i < 1000; i++) {
     npcs.push(new Npc(scene));
 }
 
-var building = new Building(scene);
+var building = new Building(5, 5, scene);
+var buildings = [building];
 
 function render() {
     stats.begin();
@@ -62,7 +63,7 @@ function render() {
         npcs[i].update(player, tick);
     }
 
-    collision.update(player, npcs, tick);
+    collision.update(player, npcs, buildings, tick);
 
     camera.update(player, tick);
 
