@@ -21,5 +21,6 @@ function Npc(scene) {
 	this.applyNextMove= function() {
 		this.position.copy(this.nextPosition);
 		mesh.position.copy(this.position);
+		mesh.position.y += 1;
 	}
 }

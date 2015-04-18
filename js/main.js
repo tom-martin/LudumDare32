@@ -17,10 +17,19 @@ stats.domElement.style.top = '0px';
 
 document.body.appendChild( stats.domElement );
 
-var light = new THREE.DirectionalLight(0xffffff, 1);
-scene.add(light);
+var light1 = new THREE.DirectionalLight(0xffffff, 1);
+light1.position.set(1,1,1);
+scene.add(light1);
 
-scene.add(new THREE.AmbientLight( 0x808080 ));
+var light2 = new THREE.DirectionalLight(0xffffff, 0.5);
+light2.position.set(0,1,0);
+scene.add(light2);
+
+var light3 = new THREE.DirectionalLight(0xffffff, 0.2);
+light3.position.set(1,0,-1);
+scene.add(light3);
+
+scene.add(new THREE.AmbientLight( 0x404040 ));
 
 var lastFrameTime = Date.now();
 
@@ -34,6 +43,8 @@ var npcs = [];
 for(var i = 0; i < 1000; i++) {
     npcs.push(new Npc(scene));
 }
+
+var building = new Building(scene);
 
 function render() {
     stats.begin();
