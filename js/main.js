@@ -44,7 +44,7 @@ var camera = new Camera(player, threeCamera);
 var collision = new Collision();
 
 var npcs = [];
-for(var i = 0; i < 500; i++) {
+for(var i = 0; i < 100; i++) {
     npcs.push(new Npc(scene));
 }
 
@@ -52,7 +52,7 @@ var buildings = [];
 
 for(var x = -250; x < 250; x+=5) {
     for(var z = -250; z < 250; z+=5) {
-        if(Math.random() < 0.2) {
+        if(Math.random() < 0.1) {
             buildings.push(new Building(x, z, 5, 5, scene));
         }
     }
