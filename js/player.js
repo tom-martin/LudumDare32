@@ -6,7 +6,7 @@ function Player(scene) {
 	scene.add( mesh );
 	this.position = new THREE.Vector3();
 	this.nextPosition = new THREE.Vector3();
-	var speed = 10;
+	var speed = 8;
 
 	this.update = function(input, tick) {
 		this.nextPosition.copy(this.position);

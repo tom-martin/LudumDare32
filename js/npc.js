@@ -6,7 +6,7 @@ function Npc(scene) {
 	scene.add( mesh );
 	this.position = new THREE.Vector3((Math.random()*500)-250, 0, (Math.random()*500)-250);
 	this.nextPosition = new THREE.Vector3();
-	var speed = 7-Math.random();
+	var speed = 5-Math.random();
 
 	var maxAge = 10;
 
