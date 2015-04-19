@@ -42,6 +42,7 @@ function Collision() {
 	}
 
 	function doEntityEntityCollision(e1, e2, tick, collisionSpeed) {
+		var collisionOccured = false;
 		if(!(e1.nextPosition.x + 0.5 < e2.nextPosition.x - 0.5 ||
 			 e1.nextPosition.x - 0.5 > e2.nextPosition.x + 0.5 ||
 			 e1.nextPosition.z + 0.5 < e2.nextPosition.z - 0.5 ||
@@ -56,8 +57,12 @@ function Collision() {
 
 	            e2.nextPosition.x += (diff.x * tick * collisionSpeed);
 	            e2.nextPosition.z += (diff.z * tick * collisionSpeed);
+
+	            collisionOccured = true;
 	        }
 	    }
+
+	    return collisionOccured;
 	}
 
 	function updateInRangeFlag(thing, player) {
@@ -67,7 +72,7 @@ function Collision() {
         thing.inRange = Math.abs(diff.x) < 30 && Math.abs(diff.z) < 30;
 	}
 
-	this.update = function(player, npcs, statics, tick) {
+	this.update = function(player, npcs, statics, now, tick) {
 		for(var i in npcs) {
 			updateInRangeFlag(npcs[i], player);
 		}
@@ -75,6 +80,7 @@ function Collision() {
 		for(var i in statics) {
 			updateInRangeFlag(statics[i], player);
 		}
+		var playerCollided = false;
 		for(var i in npcs) {
 	        var npc = npcs[i];
 
@@ -82,7 +88,7 @@ function Collision() {
 	        diff.sub(player.position);
 	        
 	        if(npc.inRange) {
-		        doEntityEntityCollision(npc, player, tick, 7);
+		        playerCollided |= doEntityEntityCollision(npc, player, tick, 7);
 		        
 		        for(var j = Number(i)+1; j < npcs.length; j++) {
 		            var otherNpc = npcs[j];
@@ -99,5 +105,9 @@ function Collision() {
     	doEntityStaticCollision(player, statics);
 
     	player.applyNextMove();
+
+    	if(playerCollided) {
+    		player.takeDamage(now);
+    	}
 	}	
 }

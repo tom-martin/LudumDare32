@@ -3,8 +3,8 @@ var threeCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.inn
 
 
 var renderer = new THREE.WebGLRenderer();
+renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
-renderer.shadowMapCullFace = THREE.CullFaceBack;
 document.body.appendChild( renderer.domElement );
 
 var stats = new Stats();
@@ -15,7 +15,7 @@ stats.domElement.style.position = 'absolute';
 stats.domElement.style.left = '0px';
 stats.domElement.style.top = '0px';
 
-document.body.appendChild( stats.domElement );
+// document.body.appendChild( stats.domElement );
 
 var light1 = new THREE.DirectionalLight(0xffffff, 1);
 light1.position.set(1,1,1);
@@ -93,15 +93,15 @@ function render() {
     lastFrameTime = now;
     requestAnimationFrame(render);
 
-    player.update(input, spray, tick);
+    player.update(input, spray, now, tick);
 
     for(var i in npcs) {
         npcs[i].update(player, tick);
     }
 
-    spray.update(threeCamera, player, npcs, input, tick);
+    spray.update(threeCamera, player, npcs, input, now, tick);
 
-    collision.update(player, npcs, buildings, tick);
+    collision.update(player, npcs, buildings, now, tick);
 
     for(var i in buildings) {
         buildings[i].update(player, tick);

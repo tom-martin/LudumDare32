@@ -19,6 +19,11 @@ function Spray(scene) {
 	var forwardZ = new THREE.Vector3(0, 0, 1);
 	var forwardX = new THREE.Vector3(1, 0, 0);
 
+	this.waterLevel = 1;
+	var waterLevelLossSpeed = 0.6;
+	var waterLevelGainSpeed = 0.1;
+	var waterExpiredTime = 0;
+
 	this.rotationForPlayer = 0;
 
 	for(var i = 0; i < 300; i++) {
@@ -31,8 +36,9 @@ function Spray(scene) {
 		sprayAngles[i] = (Math.random()*sprayAngle)-halfSprayAngle;
 	}
 
-	this.update = function(threeCamera, player, npcs, input, tick) {
-		this.spraying = input.mouseDown;
+	this.update = function(threeCamera, player, npcs, input, now, tick) {
+		var timeSinceWaterExpired = now - waterExpiredTime;
+		this.spraying = input.mouseDown && this.waterLevel > 0 && timeSinceWaterExpired > 1000;
 
 		var mouseGroundPos = input.getMouseGroundPosition(threeCamera);
 		diff.copy(mouseGroundPos).sub(player.position);
@@ -42,8 +48,12 @@ function Spray(scene) {
 			this.rotationForPlayer = -this.rotationForPlayer;
 		}
 
-
 		if(this.spraying) {
+			this.waterLevel -= tick*waterLevelLossSpeed;
+			if(this.waterLevel < 0) {
+				waterExpiredTime = now;
+				this.waterLevel = 0;
+			}
 			if(sprayLength < maxSprayLength) {
 				sprayLength+=(tick*sprayPushSpeed);
 				sprayLength = Math.min(maxSprayLength, sprayLength);
@@ -85,6 +95,10 @@ function Spray(scene) {
 				}
 			}
 		} else {
+			this.waterLevel += tick*waterLevelGainSpeed;
+			if(this.waterLevel > 1) {
+				this.waterLevel = 1;
+			}
 			sprayLength = 1;
 			for(var i in sprayMeshes) {
 				var sprayMesh = sprayMeshes[i];

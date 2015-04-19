@@ -11,6 +11,8 @@ var npcBodyTexture2 = THREE.ImageUtils.loadTexture( "textures/zombieBody2.png" )
 npcBodyTexture2.magFilter = THREE.NearestFilter;
 
 function Npc(scene) {
+	this.healed = false;
+	
 	var headTex = npcHeadTexture;
 	if(Math.random() < 0.5) {
 		headTex = npcHeadTexture2;
@@ -30,6 +32,7 @@ function Npc(scene) {
 
 	this.position = new THREE.Vector3((Math.random()*500)-250, 0, (Math.random()*500)-250);
 	this.nextPosition = new THREE.Vector3();
+	this.nextPosition.copy(this.position);
 	var speed = 5-Math.random();
 
 	var maxAge = 10;
@@ -108,4 +111,7 @@ function Npc(scene) {
 		headMesh.position.y -= (bounce/2);
 		bodyMesh.position.y += bounce;
 	}
+
+	this.applyNextMove();
+
 }

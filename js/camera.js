@@ -12,8 +12,8 @@ function Camera(player, threeCamera) {
 		target.z -= diff.z * tick * speed;
 
 		threeCamera.position.x = target.x;
-	    threeCamera.position.y = 20;
-	    threeCamera.position.z = target.z+10;
+	    threeCamera.position.y = 24;
+	    threeCamera.position.z = target.z+12;
 	    
 	    threeCamera.lookAt(target);
 	}
