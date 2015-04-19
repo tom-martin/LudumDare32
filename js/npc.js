@@ -1,9 +1,13 @@
-var npcGeometry = new THREE.BoxGeometry( 1, 2, 1 );
+
 
 function Npc(scene) {
 	var npcMaterial = new THREE.MeshLambertMaterial( {color: 0x00ff00, transparent: true, opacity: 1.0} );
-	var mesh = new THREE.Mesh( npcGeometry, npcMaterial );
-	scene.add( mesh );
+	var headMesh = new THREE.Mesh( headGeom,  npcMaterial);
+	scene.add( headMesh );
+
+	var bodyMesh = new THREE.Mesh( bodyGeom,  npcMaterial);
+	scene.add( bodyMesh );
+
 	this.position = new THREE.Vector3((Math.random()*500)-250, 0, (Math.random()*500)-250);
 	this.nextPosition = new THREE.Vector3();
 	var speed = 5-Math.random();
@@ -11,6 +15,12 @@ function Npc(scene) {
 	var maxAge = 10;
 
 	var age = Math.random()*maxAge;
+
+	var bounce = Math.random();
+	var bounceSpeed = 1.5;
+	var maxBounce = 0.25;
+
+	var forwardZ = new THREE.Vector3(0, 0, 1);
 
 	var dir = new THREE.Vector3(0, 0, 0);
 	this.update = function(player, tick) {
@@ -24,6 +34,19 @@ function Npc(scene) {
 
 		diff.copy(this.nextPosition);
         diff.sub(player.position);
+        var angleToPlayer = diff.angleTo(forwardZ)+Math.PI;
+        if(diff.x < 0) {
+        	angleToPlayer = -angleToPlayer;
+        }
+
+        if(dir.x != 0 || dir.z != 0) {
+			bounce += tick * bounceSpeed;
+			if(bounce < -maxBounce || bounce > maxBounce) {
+				bounce = Math.max(bounce, -maxBounce);
+				bounce = Math.min(bounce, maxBounce);
+				bounceSpeed = -bounceSpeed;
+			}
+		}
         
         if(age > maxAge) {
         	var chance = Math.random();
@@ -50,12 +73,17 @@ function Npc(scene) {
 			this.nextPosition.x += dir.x * tick * speed;
 			this.nextPosition.z += dir.z * tick * speed;
 		}
+
+		bodyMesh.rotation.y = angleToPlayer;
+		headMesh.rotation.y = angleToPlayer;
 	}
 	var diff = new THREE.Vector3();
 
 	this.applyNextMove= function() {
 		this.position.copy(this.nextPosition);
-		mesh.position.copy(this.position);
-		mesh.position.y += 1;
+		headMesh.position.copy(this.position);
+		bodyMesh.position.copy(this.position);
+		headMesh.position.y -= (bounce/2);
+		bodyMesh.position.y += bounce;
 	}
 }

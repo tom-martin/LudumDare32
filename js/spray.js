@@ -60,10 +60,7 @@ function Spray(scene) {
 				sprayMesh.position.copy(diff);
 				sprayMesh.position.applyAxisAngle(up, sprayAngles[i]);
 				sprayMesh.position.multiplyScalar((sprayLength*sprayProgress[i]));
-				sprayMesh.position.add(diff);
-				sprayMesh.position.add(diff);
 				sprayMesh.position.add(player.position);
-				sprayMesh.position.y+=2.75;
 			}
 			var sprayAngleToZ = diff.angleTo(forwardZ);
 			var sprayAngleToX = diff.angleTo(forwardX);

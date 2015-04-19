@@ -52,42 +52,39 @@ var npcs = [];
 var buildings = [];
 
 var loader = new THREE.JSONLoader();
-loader.load( 'models/guy.json', function ( playerGeom, playerMats ) {
 
-    player = new Player(playerGeom, playerMats, scene);
-    input = new Input();
 
-    camera = new Camera(player, threeCamera);
-    collision = new Collision();
+player = new Player(scene);
+input = new Input();
 
-    spray = new Spray(scene);
+camera = new Camera(player, threeCamera);
+collision = new Collision();
 
-    npcs = [];
-    for(var i = 0; i < 100; i++) {
-        npcs.push(new Npc(scene));
-    }
+spray = new Spray(scene);
 
-    buildings = [];
-    for(var x = -250; x <= 250; x+=5) {
-        for(var z = -250; z <= 250; z+=5) {
-            if(Math.random() < 0.03) {
-                buildings.push(new Building(x, z, Math.round(1+(Math.random()*4))*5, Math.round(1+(Math.random()*4))*5, scene));
-            }
+npcs = [];
+for(var i = 0; i < 1; i++) {
+    npcs.push(new Npc(scene));
+}
+
+buildings = [];
+for(var x = -250; x <= 250; x+=5) {
+    for(var z = -250; z <= 250; z+=5) {
+        if(Math.random() < 0.03) {
+            buildings.push(new Building(x, z, Math.round(1+(Math.random()*4))*5, Math.round(1+(Math.random()*4))*5, scene));
         }
     }
+}
 
-    for(var x = -250; x <= 250; x+=5) {
-        for(var z = -250; z <= 250; z+=5) {
-            if(x == 250 || z == 250 || x == -250 || z == -250) {
-                buildings.push(new Building(x, z, Math.round(1+(Math.random()*4))*5, Math.round(1+(Math.random()*4))*5, scene));
-            }
+for(var x = -250; x <= 250; x+=5) {
+    for(var z = -250; z <= 250; z+=5) {
+        if(x == 250 || z == 250 || x == -250 || z == -250) {
+            buildings.push(new Building(x, z, Math.round(1+(Math.random()*4))*5, Math.round(1+(Math.random()*4))*5, scene));
         }
     }
+}
 
-    render();
-
-} );
-
+render();
 
 function render() {
     stats.begin();
