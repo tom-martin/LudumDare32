@@ -33,32 +33,61 @@ var light4 = new THREE.DirectionalLight(0xffffff, 0.4);
 light4.position.set(-1,0,-1);
 scene.add(light4);
 
-// scene.add(new THREE.AmbientLight( 0x404040 ));
+scene.add(new THREE.AmbientLight( 0x404040 ));
 
 var lastFrameTime = Date.now();
 
-var player = new Player(scene);
-var input = new Input();
+var manager = new THREE.LoadingManager();
+manager.onProgress = function ( item, loaded, total ) {
 
-var camera = new Camera(player, threeCamera);
-var collision = new Collision();
 
-var spray = new Spray(scene);
+};
 
+var player = null;
+var input = null;
+var camera = null;
+var collision = null;
+var spray = null;
 var npcs = [];
-for(var i = 0; i < 100; i++) {
-    npcs.push(new Npc(scene));
-}
-
 var buildings = [];
 
-for(var x = -250; x < 250; x+=5) {
-    for(var z = -250; z < 250; z+=5) {
-        if(Math.random() < 0.1) {
-            buildings.push(new Building(x, z, 5, 5, scene));
+var loader = new THREE.JSONLoader();
+loader.load( 'models/guy.json', function ( playerGeom, playerMats ) {
+
+    player = new Player(playerGeom, playerMats, scene);
+    input = new Input();
+
+    camera = new Camera(player, threeCamera);
+    collision = new Collision();
+
+    spray = new Spray(scene);
+
+    npcs = [];
+    for(var i = 0; i < 100; i++) {
+        npcs.push(new Npc(scene));
+    }
+
+    buildings = [];
+    for(var x = -250; x <= 250; x+=5) {
+        for(var z = -250; z <= 250; z+=5) {
+            if(Math.random() < 0.03) {
+                buildings.push(new Building(x, z, Math.round(1+(Math.random()*4))*5, Math.round(1+(Math.random()*4))*5, scene));
+            }
         }
     }
-}
+
+    for(var x = -250; x <= 250; x+=5) {
+        for(var z = -250; z <= 250; z+=5) {
+            if(x == 250 || z == 250 || x == -250 || z == -250) {
+                buildings.push(new Building(x, z, Math.round(1+(Math.random()*4))*5, Math.round(1+(Math.random()*4))*5, scene));
+            }
+        }
+    }
+
+    render();
+
+} );
+
 
 function render() {
     stats.begin();
@@ -67,7 +96,7 @@ function render() {
     lastFrameTime = now;
     requestAnimationFrame(render);
 
-    player.update(input, tick);
+    player.update(input, spray, tick);
 
     for(var i in npcs) {
         npcs[i].update(player, tick);
@@ -86,4 +115,3 @@ function render() {
     renderer.render(scene, threeCamera);
     stats.end();
 }
-render();

@@ -1,5 +1,5 @@
 function Spray(scene) {
-	var sprayMaterial = new THREE.MeshLambertMaterial( {color: 0x60ddff, transparent: true, opacity: 0.7 } );
+	var sprayMaterial = new THREE.MeshLambertMaterial( {color: 0x60ddff, transparent: true, opacity: 0.9 } );
 	var sprayMeshes = [];
 	var sprayLength = 0;
 	var maxSprayLength = 5;
@@ -19,8 +19,11 @@ function Spray(scene) {
 	var forwardZ = new THREE.Vector3(0, 0, 1);
 	var forwardX = new THREE.Vector3(1, 0, 0);
 
-	for(var i = 0; i < 100; i++) {
-		var sprayGeometry = new THREE.BoxGeometry(0.5+Math.random(), 0.5+Math.random(), 0.5+Math.random() );
+	this.rotationForPlayer = 0;
+
+	for(var i = 0; i < 300; i++) {
+		// var sprayGeometry = new THREE.BoxGeometry(0.5+Math.random(), 0.5+Math.random(), 0.5+Math.random() );
+		var sprayGeometry = new THREE.SphereGeometry( 0.25+Math.random()/2);
 		var sprayMesh = new THREE.Mesh( sprayGeometry, sprayMaterial );
 		sprayMeshes.push(sprayMesh);
 		scene.add(sprayMesh);
@@ -31,16 +34,22 @@ function Spray(scene) {
 	this.update = function(threeCamera, player, npcs, input, tick) {
 		this.spraying = input.mouseDown;
 
+		var mouseGroundPos = input.getMouseGroundPosition(threeCamera);
+		diff.copy(mouseGroundPos).sub(player.position);
+		diff.normalize();
+		this.rotationForPlayer = diff.angleTo(forwardZ);
+		if(diff.x < 0) {
+			this.rotationForPlayer = -this.rotationForPlayer;
+		}
+
+
 		if(this.spraying) {
 			if(sprayLength < maxSprayLength) {
 				sprayLength+=(tick*sprayPushSpeed);
 				sprayLength = Math.min(maxSprayLength, sprayLength);
 				sprayLengthSq = sprayLength*sprayLength;
 			}
-			var mouseGroundPos = input.getMouseGroundPosition(threeCamera);
-			diff.copy(mouseGroundPos).sub(player.position);
-			diff.normalize();
-
+			
 			for(var i in sprayMeshes) {
 				var sprayMesh = sprayMeshes[i];
 				sprayProgress[i] += tick;
@@ -50,9 +59,11 @@ function Spray(scene) {
 				sprayMesh.visible = true;
 				sprayMesh.position.copy(diff);
 				sprayMesh.position.applyAxisAngle(up, sprayAngles[i]);
-				sprayMesh.position.multiplyScalar(1+(sprayLength*sprayProgress[i]));
+				sprayMesh.position.multiplyScalar((sprayLength*sprayProgress[i]));
+				sprayMesh.position.add(diff);
+				sprayMesh.position.add(diff);
 				sprayMesh.position.add(player.position);
-				sprayMesh.position.y+=1;
+				sprayMesh.position.y+=2.75;
 			}
 			var sprayAngleToZ = diff.angleTo(forwardZ);
 			var sprayAngleToX = diff.angleTo(forwardX);
@@ -75,7 +86,7 @@ function Spray(scene) {
 				}
 			}
 		} else {
-			sprayLength = 0;
+			sprayLength = 1;
 			for(var i in sprayMeshes) {
 				var sprayMesh = sprayMeshes[i];
 				sprayMesh.visible = false;

@@ -18,8 +18,8 @@ function Collision() {
 
 				var sLeft = stat.position.x - (stat.width/2);
 				var sRight = stat.position.x + (stat.width/2);
-				var sBack = stat.position.z-(stat.width/2);
-				var sFront = stat.position.z+(stat.width/2);
+				var sBack = stat.position.z-(stat.depth/2);
+				var sFront = stat.position.z+(stat.depth/2);
 
 				var leftDiff = Math.abs(sLeft - eRight);
 				var rightDiff = Math.abs(sRight - eLeft);
