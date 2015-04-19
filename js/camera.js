@@ -3,7 +3,7 @@ function Camera(player, threeCamera) {
 	var target = new THREE.Vector3();
 	target.copy(player.position);
 	var diff = new THREE.Vector3();
-	var speed = 10;
+	var speed = 6;
 
 	this.update = function(toTrack, tick) {
 		diff.copy(target).sub(toTrack.position);
@@ -12,8 +12,8 @@ function Camera(player, threeCamera) {
 		target.z -= diff.z * tick * speed;
 
 		threeCamera.position.x = target.x;
-	    threeCamera.position.y = 5;
-	    threeCamera.position.z = target.z+2.5;
+	    threeCamera.position.y = 20;
+	    threeCamera.position.z = target.z+10;
 	    
 	    threeCamera.lookAt(target);
 	}

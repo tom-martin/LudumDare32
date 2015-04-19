@@ -1,11 +1,31 @@
+var npcHeadTexture = THREE.ImageUtils.loadTexture( "textures/zombieHead.png" );
+npcHeadTexture.magFilter = THREE.NearestFilter;
 
+var npcHeadTexture2 = THREE.ImageUtils.loadTexture( "textures/zombieHead2.png" );
+npcHeadTexture2.magFilter = THREE.NearestFilter;
+
+var npcBodyTexture = THREE.ImageUtils.loadTexture( "textures/zombieBody.png" );
+npcBodyTexture.magFilter = THREE.NearestFilter;
+
+var npcBodyTexture2 = THREE.ImageUtils.loadTexture( "textures/zombieBody2.png" );
+npcBodyTexture2.magFilter = THREE.NearestFilter;
 
 function Npc(scene) {
-	var npcMaterial = new THREE.MeshLambertMaterial( {color: 0x00ff00, transparent: true, opacity: 1.0} );
-	var headMesh = new THREE.Mesh( headGeom,  npcMaterial);
+	var headTex = npcHeadTexture;
+	if(Math.random() < 0.5) {
+		headTex = npcHeadTexture2;
+	}
+	var npcHeadMaterial = new THREE.MeshLambertMaterial( {map: headTex, transparent: true, opacity: 1.0} );
+	var headMesh = new THREE.Mesh( headGeom,  npcHeadMaterial);
 	scene.add( headMesh );
 
-	var bodyMesh = new THREE.Mesh( bodyGeom,  npcMaterial);
+	var bodyTex = npcBodyTexture;
+	if(Math.random() < 0.5) {
+		bodyTex = npcBodyTexture2;
+	}
+
+	var npcBodyMaterial = new THREE.MeshLambertMaterial( {map: bodyTex, transparent: true, opacity: 1.0} );
+	var bodyMesh = new THREE.Mesh( bodyGeom,  npcBodyMaterial);
 	scene.add( bodyMesh );
 
 	this.position = new THREE.Vector3((Math.random()*500)-250, 0, (Math.random()*500)-250);
@@ -29,7 +49,8 @@ function Npc(scene) {
 		age += tick;
 
 		if(age > (maxAge-1)) {
-			npcMaterial.opacity = 1-(age-(maxAge-1));
+			npcHeadMaterial.opacity = 1-(age-(maxAge-1));
+			npcBodyMaterial.opacity = 1-(age-(maxAge-1));
 		}
 
 		diff.copy(this.nextPosition);
@@ -65,7 +86,8 @@ function Npc(scene) {
         	}
         	this.applyNextMove();
         	age = 0;
-        	npcMaterial.opacity = 1
+        	npcHeadMaterial.opacity = 1
+        	npcBodyMaterial.opacity = 1
         } else {
 			dir.x = player.position.x - this.position.x;
 			dir.z = player.position.z - this.position.z;

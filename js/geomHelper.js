@@ -71,6 +71,152 @@ function GeomHelper() {
 		return faceVertIndex;
 	}
 
+	this.createGunGeom = function(geom, faceVertIndex, halfWidth, halfHeight, halfDepth) {
+		var startY = 0;
+		var startX = 9/16;
+		var startZ = 7/16;
+		// TOP
+		geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ+halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ+halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ-halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+1, faceVertIndex+2));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 1),new THREE.Vector2(6/16,12/16),new THREE.Vector2(10/16,12/16)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+2, faceVertIndex+3));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 1),new THREE.Vector2(10/16,12/16),new THREE.Vector2(10/16,1)]);
+    	faceVertIndex+=4;
+
+    	// BOTTOM
+		geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ+halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ+halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ-halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+2, faceVertIndex+1));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 4/16),new THREE.Vector2(10/16,0),new THREE.Vector2(6/16,0)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+3, faceVertIndex+2));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 4/16),new THREE.Vector2(10/16,4/16), new THREE.Vector2(10/16,0)]);
+    	faceVertIndex+=4;
+
+    	// BACK
+    	geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ-halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ-halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+1, faceVertIndex+2));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(10/16, 12/16),new THREE.Vector2(6/16,8/16),new THREE.Vector2(10/16,8/16)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+3, faceVertIndex+1));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(10/16, 12/16),new THREE.Vector2(6/16,12/16),new THREE.Vector2(6/16,8/16)]);
+    	faceVertIndex+=4;
+
+    	// FRONT
+    	geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ+halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ+halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ+halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ+halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+2, faceVertIndex+1));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 8/16),new THREE.Vector2(6/16,4/16),new THREE.Vector2(10/16,4/16)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+1, faceVertIndex+3));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 8/16),new THREE.Vector2(10/16,4/16),new THREE.Vector2(10/16,8/16)]);
+    	faceVertIndex+=4;
+
+    	// LEFT
+    	geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ+halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ+halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+1, faceVertIndex+2));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(2/16, 8/16),new THREE.Vector2(2/16,4/16),new THREE.Vector2(6/16,4/16)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+2, faceVertIndex+3));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(2/16, 8/16),new THREE.Vector2(6/16,4/16),new THREE.Vector2(6/16,8/16)]);
+    	faceVertIndex+=4;
+
+    	// RIGHT
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ+halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ+halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+2, faceVertIndex+1));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(14/16, 8/16),new THREE.Vector2(10/16,4/16),new THREE.Vector2(14/16,4/16)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+3, faceVertIndex+2));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(14/16, 8/16),new THREE.Vector2(10/16,8/16),new THREE.Vector2(10/16,4/16)]);
+    	faceVertIndex+=4;
+
+		return faceVertIndex;
+	}
+
+	this.createTankGeom = function(geom, faceVertIndex, halfWidth, halfHeight, halfDepth) {
+		var startY = 0.5;
+		var startX = 0;
+		var startZ = -0.75;
+		// TOP
+		geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ+halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ+halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ-halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+1, faceVertIndex+2));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 1),new THREE.Vector2(6/16,12/16),new THREE.Vector2(10/16,12/16)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+2, faceVertIndex+3));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 1),new THREE.Vector2(10/16,12/16),new THREE.Vector2(10/16,1)]);
+    	faceVertIndex+=4;
+
+    	// BOTTOM
+		geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ+halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ+halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ-halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+2, faceVertIndex+1));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 4/16),new THREE.Vector2(10/16,0),new THREE.Vector2(6/16,0)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+3, faceVertIndex+2));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 4/16),new THREE.Vector2(10/16,4/16), new THREE.Vector2(10/16,0)]);
+    	faceVertIndex+=4;
+
+    	// BACK
+    	geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ-halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ-halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+1, faceVertIndex+2));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(10/16, 12/16),new THREE.Vector2(6/16,8/16),new THREE.Vector2(10/16,8/16)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+3, faceVertIndex+1));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(10/16, 12/16),new THREE.Vector2(6/16,12/16),new THREE.Vector2(6/16,8/16)]);
+    	faceVertIndex+=4;
+
+    	// FRONT
+    	geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ+halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ+halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ+halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ+halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+2, faceVertIndex+1));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 8/16),new THREE.Vector2(6/16,4/16),new THREE.Vector2(10/16,4/16)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+1, faceVertIndex+3));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(6/16, 8/16),new THREE.Vector2(10/16,4/16),new THREE.Vector2(10/16,8/16)]);
+    	faceVertIndex+=4;
+
+    	// LEFT
+    	geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY-halfHeight, startZ+halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX-halfWidth, startY+halfHeight, startZ+halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+1, faceVertIndex+2));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(2/16, 8/16),new THREE.Vector2(2/16,4/16),new THREE.Vector2(6/16,4/16)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+2, faceVertIndex+3));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(2/16, 8/16),new THREE.Vector2(6/16,4/16),new THREE.Vector2(6/16,8/16)]);
+    	faceVertIndex+=4;
+
+    	// RIGHT
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ-halfDepth));
+	    geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY-halfHeight, startZ+halfDepth));
+    	geom.vertices.push(new THREE.Vector3(startX+halfWidth, startY+halfHeight, startZ+halfDepth));
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+2, faceVertIndex+1));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(14/16, 8/16),new THREE.Vector2(10/16,4/16),new THREE.Vector2(14/16,4/16)]);
+    	geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+3, faceVertIndex+2));
+    	geom.faceVertexUvs[0].push([new THREE.Vector2(14/16, 8/16),new THREE.Vector2(10/16,8/16),new THREE.Vector2(10/16,4/16)]);
+    	faceVertIndex+=4;
+
+		return faceVertIndex;
+	}
+
 	this.createBodyGeom = function(geom, faceVertIndex, halfWidth, halfHeight, halfDepth) {
 		// TOP
 		geom.vertices.push(new THREE.Vector3(-halfWidth, halfHeight, -halfDepth));

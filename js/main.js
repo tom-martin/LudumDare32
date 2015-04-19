@@ -63,7 +63,7 @@ collision = new Collision();
 spray = new Spray(scene);
 
 npcs = [];
-for(var i = 0; i < 1; i++) {
+for(var i = 0; i < 100; i++) {
     npcs.push(new Npc(scene));
 }
 

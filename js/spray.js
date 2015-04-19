@@ -2,7 +2,7 @@ function Spray(scene) {
 	var sprayMaterial = new THREE.MeshLambertMaterial( {color: 0x60ddff, transparent: true, opacity: 0.9 } );
 	var sprayMeshes = [];
 	var sprayLength = 0;
-	var maxSprayLength = 5;
+	var maxSprayLength = 7;
 	var sprayLengthSq = sprayLength*sprayLength;
 	var sprayProgress = [];
 	var sprayAngles = [];
@@ -49,6 +49,8 @@ function Spray(scene) {
 				sprayLength = Math.min(maxSprayLength, sprayLength);
 				sprayLengthSq = sprayLength*sprayLength;
 			}
+
+			var particleSprayLength = sprayLength-2;
 			
 			for(var i in sprayMeshes) {
 				var sprayMesh = sprayMeshes[i];
@@ -58,8 +60,8 @@ function Spray(scene) {
 				}
 				sprayMesh.visible = true;
 				sprayMesh.position.copy(diff);
-				sprayMesh.position.applyAxisAngle(up, sprayAngles[i]);
-				sprayMesh.position.multiplyScalar((sprayLength*sprayProgress[i]));
+				sprayMesh.position.applyAxisAngle(up, sprayAngles[i]+((1-sprayProgress[i])/5));
+				sprayMesh.position.multiplyScalar(2+(particleSprayLength*sprayProgress[i]));
 				sprayMesh.position.add(player.position);
 			}
 			var sprayAngleToZ = diff.angleTo(forwardZ);
