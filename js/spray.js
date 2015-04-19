@@ -22,6 +22,7 @@ function Spray(scene) {
 	this.waterLevel = 1;
 	var waterLevelLossSpeed = 0.6;
 	var waterLevelGainSpeed = 0.1;
+	var waterLevelAntidoteBonus = 5;
 	var waterExpiredTime = 0;
 
 	this.rotationForPlayer = 0;
@@ -39,6 +40,10 @@ function Spray(scene) {
 	this.update = function(threeCamera, player, npcs, input, now, tick) {
 		var timeSinceWaterExpired = now - waterExpiredTime;
 		this.spraying = input.mouseDown && this.waterLevel > 0 && timeSinceWaterExpired > 1000;
+
+		if(player.hasAntidote) {
+			sprayMaterial.color.setHex(0xff00ff);
+		}
 
 		var mouseGroundPos = input.getMouseGroundPosition(threeCamera);
 		diff.copy(mouseGroundPos).sub(player.position);
@@ -88,14 +93,23 @@ function Spray(scene) {
 						var angleToX = npcDiff.angleTo(forwardX);
 						if(Math.abs(sprayAngleToZ-angleToZ) < halfSprayAngle &&
 						   Math.abs(sprayAngleToX-angleToX) < halfSprayAngle) {
-							npc.nextPosition.x += npcDiff.x*tick*sprayPushSpeed;
-							npc.nextPosition.z += npcDiff.z*tick*sprayPushSpeed;
+							if(player.hasAntidote) {
+								npc.heal();
+							} else {
+								npc.nextPosition.x += npcDiff.x*tick*sprayPushSpeed;
+								npc.nextPosition.z += npcDiff.z*tick*sprayPushSpeed;
+							}
 						}
 					}
 				}
 			}
 		} else {
-			this.waterLevel += tick*waterLevelGainSpeed;
+			var waterAddition = tick*waterLevelGainSpeed;
+			if(player.hasAntidote) {
+				waterAddition*=waterLevelAntidoteBonus;
+			}
+			this.waterLevel += waterAddition;
+			
 			if(this.waterLevel > 1) {
 				this.waterLevel = 1;
 			}

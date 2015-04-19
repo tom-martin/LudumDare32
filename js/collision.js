@@ -74,7 +74,11 @@ function Collision() {
 
 	this.update = function(player, npcs, statics, now, tick) {
 		for(var i in npcs) {
-			updateInRangeFlag(npcs[i], player);
+			if(!player.hasAntidote) {
+				updateInRangeFlag(npcs[i], player);
+			} else {
+				npcs[i].inRange = true;
+			}
 		}
 
 		for(var i in statics) {
@@ -88,7 +92,7 @@ function Collision() {
 	        diff.sub(player.position);
 	        
 	        if(npc.inRange) {
-		        playerCollided |= doEntityEntityCollision(npc, player, tick, 7);
+		        playerCollided |= (!npc.healed) && doEntityEntityCollision(npc, player, tick, 7);
 		        
 		        for(var j = Number(i)+1; j < npcs.length; j++) {
 		            var otherNpc = npcs[j];

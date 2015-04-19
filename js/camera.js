@@ -14,7 +14,7 @@ function Camera(player, threeCamera) {
 		threeCamera.position.x = target.x;
 	    threeCamera.position.y = 24;
 	    threeCamera.position.z = target.z+12;
-	    
+
 	    threeCamera.lookAt(target);
 	}
 }

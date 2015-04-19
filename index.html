@@ -1,15 +1,43 @@
 <html> 
   <head>
-  	<title>LD32</title> 
+  	<title>Zombie Splash City - LD32</title> 
   	<style>
 canvas { width: 100%; height: 100%;}
-div {
+
+div#dialog {
+  font-family: courier;
   position: relative;
-  background-color: transparent;
+  width: 500px;
+  margin: auto;
+  z-index: 10;
+  background-color: white;
+  padding: 10px;
+}
+
+div#dialog button{
+  text-align: center;
+  background-color: gray;
+  color: white;
+  font-size: 20px;
 }
     </style> 
   </head> 
   <body>
+    <div id="dialog">
+      <h1>Zombie Splash City</h1>
+      <div id="instructions">
+        <p>A zombie infestation has taken over the city. Only you, the city street cleaner has escaped infection!
+          You must find the antidote and spray it on the zombies to cure them.</p>
+        <h3>Instructions</h3>
+        <ul>
+          <li>Use WSAD to walk</li>
+          <li>Use the mouse to aim your water gun.</li>
+          <li>Follow the red arrow to find the antidote.</li>
+        </ul>
+      </div>
+      <div><h3 id="result"></h3></div>
+      <button id="button" onclick="init()">Start</button>
+    </div>
   	<script src="js/lib/three.min.js"></script> 
     <script src="js/lib/stats.min.js"></script>
     <script src="js/geomHelper.js"></script>
@@ -20,6 +48,7 @@ div {
     <script src="js/collision.js"></script>
     <script src="js/building.js"></script>
     <script src="js/spray.js"></script>
+    <script src="js/antidote.js"></script>
     <script src="js/main.js"></script>
   </body> 
 </html>

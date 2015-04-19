@@ -1,4 +1,15 @@
 function GeomHelper() {
+    this.createArrowGeom = function(geom, faceVertIndex, halfWidth, halfHeight, halfDepth) {
+        var startY = 0;
+        var startZ = 3;
+        // TOP
+        geom.vertices.push(new THREE.Vector3(0, startY, startZ+halfDepth));
+        geom.vertices.push(new THREE.Vector3(halfWidth, startY, startZ));
+        geom.vertices.push(new THREE.Vector3(-halfWidth, startY, startZ));
+        geom.faces.push(new THREE.Face3(faceVertIndex, faceVertIndex+1, faceVertIndex+2));
+        faceVertIndex+=3;
+    }
+
 	this.createHeadGeom = function(geom, faceVertIndex, halfWidth, halfHeight, halfDepth) {
 		var startY = 1;
 		var startZ = 2/16;

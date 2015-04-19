@@ -24,6 +24,11 @@ faceVertIndex = 0;
 gh.createTankGeom(tankGeom, faceVertIndex, 0.5, 0.5, 0.25);
 tankGeom.computeFaceNormals();
 
+var arrowGeom = new THREE.Geometry();
+faceVertIndex = 0;
+gh.createArrowGeom(arrowGeom, faceVertIndex, 1, 1, 1);
+arrowGeom.computeFaceNormals();
+
 var headTexture = THREE.ImageUtils.loadTexture( "textures/playerHead.png" );
 headTexture.magFilter = THREE.NearestFilter;
 
@@ -63,16 +68,25 @@ function Player(scene) {
 	var waterBarMesh = new THREE.Mesh( waterBarGeom,  waterBarMaterial);
 	scene.add( waterBarMesh );	
 
+	var arrowMaterial = new THREE.MeshLambertMaterial( {color: 0xff0000, transparent: true, opacity: 1.0 } );
+	var arrowMesh = new THREE.Mesh(arrowGeom, arrowMaterial);
+	scene.add(arrowMesh);
+
 	this.position = new THREE.Vector3(0, 0, 0);
 	this.nextPosition = new THREE.Vector3(0.1, 0, 0.1);
-	var speed = 8;
+	var speed = 9;
 
 	var bounce = 0;
 	var bounceSpeed = 3;
 	var maxBounce = 0.25;
 
+	var arrowOpacity = 1;
+	var arrowOpacitySpeed = 8;
+	var minArrowOpacity = 0.1;
+	var maxArrowOpacity = 1;
+
 	this.health = 1;
-	var healthCost = 0.2;
+	var healthCost = 0.334;
 	var lastDamageTime = 0;
 
 	var damagedOpacity = 1;
@@ -84,69 +98,114 @@ function Player(scene) {
 	var deadRotation = 0;
 	var deathFallSpeed = 4;
 
-	this.update = function(input, spray, now, tick) {
-		var dir = input.getDirection();
+	this.antidotesObtained = 0;
 
-		if(this.health > 0) {
+	this.hasAntidote = false;
 
-			if(dir.x != 0 || dir.z != 0) {
-				bounce += tick * bounceSpeed;
-				if(bounce < -maxBounce || bounce > maxBounce) {
-					bounce = Math.max(bounce, -maxBounce);
-					bounce = Math.min(bounce, maxBounce);
-					bounceSpeed = -bounceSpeed;
+	var diff = new THREE.Vector3();
+	var forwardZ = new THREE.Vector3(0, 0, 1);
+
+	this.update = function(input, spray, antidote, gameOver, unhealedNpc, now, tick) {
+		if(!gameOver) {
+			var dir = input.getDirection();
+
+			if(this.health > 0) {
+
+				if(dir.x != 0 || dir.z != 0) {
+					bounce += tick * bounceSpeed;
+					if(bounce < -maxBounce || bounce > maxBounce) {
+						bounce = Math.max(bounce, -maxBounce);
+						bounce = Math.min(bounce, maxBounce);
+						bounceSpeed = -bounceSpeed;
+					}
 				}
-			}
 
-			if(now - lastDamageTime < 5000) {
-				damagedOpacity += tick * damagedOpacitySpeed;
-				if(damagedOpacity < -minDamageOpacity || damagedOpacity > maxDamageOpacity) {
-					damagedOpacity = Math.max(damagedOpacity, minDamageOpacity);
-					damagedOpacity = Math.min(damagedOpacity, maxDamageOpacity);
-					damagedOpacitySpeed = -damagedOpacitySpeed;
+				if(now - lastDamageTime < 5000) {
+					damagedOpacity += tick * damagedOpacitySpeed;
+					if(damagedOpacity < -minDamageOpacity || damagedOpacity > maxDamageOpacity) {
+						damagedOpacity = Math.max(damagedOpacity, minDamageOpacity);
+						damagedOpacity = Math.min(damagedOpacity, maxDamageOpacity);
+						damagedOpacitySpeed = -damagedOpacitySpeed;
+					}
+				} else {
+					damagedOpacity = 1;
 				}
+				headMaterial.opacity = damagedOpacity;
+				bodyMaterial.opacity = damagedOpacity;
+
+				this.nextPosition.copy(this.position);
+				
+				this.nextPosition.x += dir.x * tick * speed;
+				this.nextPosition.z += dir.z * tick * speed;
+
+				bodyMesh.rotation.y = spray.rotationForPlayer;
+				headMesh.rotation.y = spray.rotationForPlayer;
+				gunMesh.rotation.y = spray.rotationForPlayer;
+				tankMesh.rotation.y = spray.rotationForPlayer;
 			} else {
 				damagedOpacity = 1;
+				spray.waterLevel = 0;
+				if(deadRotation < Math.PI/2) {
+					deadRotation+=(tick*deathFallSpeed);
+				}
+
+				bodyMesh.rotation.x = deadRotation;
+				headMesh.rotation.x = deadRotation;
+				gunMesh.rotation.x = deadRotation;
+				tankMesh.rotation.x = deadRotation;
 			}
-			headMaterial.opacity = damagedOpacity;
-			bodyMaterial.opacity = damagedOpacity;
 
-			this.nextPosition.copy(this.position);
-			
-			this.nextPosition.x += dir.x * tick * speed;
-			this.nextPosition.z += dir.z * tick * speed;
+			healthMesh.scale.x = this.health;
+			healthMesh.visible = this.health > 0;
+			waterBarMesh.scale.x = spray.waterLevel;
+			waterLevel = spray.waterLevel;
+			waterBarMesh.visible = waterLevel > 0;
 
-			bodyMesh.rotation.y = spray.rotationForPlayer;
-			headMesh.rotation.y = spray.rotationForPlayer;
-			gunMesh.rotation.y = spray.rotationForPlayer;
-			tankMesh.rotation.y = spray.rotationForPlayer;
+
+			arrowOpacity += tick * arrowOpacitySpeed;
+			if(arrowOpacity < -minArrowOpacity || arrowOpacity > maxArrowOpacity) {
+				arrowOpacity = Math.max(arrowOpacity, minArrowOpacity);
+				arrowOpacity = Math.min(arrowOpacity, maxArrowOpacity);
+				arrowOpacitySpeed = -arrowOpacitySpeed;
+			}
+			arrowMaterial.opacity = arrowOpacity;
+
+			var arrowTarget = antidote.position;
+			if(player.hasAntidote && unhealedNpc != null) {
+				arrowTarget = unhealedNpc.position;
+			}
+
+			diff.copy(arrowTarget).sub(this.position);
+			diff.normalize();
+			var arrowAngle = diff.angleTo(forwardZ);
+			if(diff.x < 0) {
+				arrowAngle = -arrowAngle;
+			}
+			arrowMesh.rotation.y = arrowAngle;
+
+			if(this.hasAntidote && unhealedNpc == null) {
+				arrowMesh.visible = false;
+			} else {
+				arrowMesh.visible = true;
+			}
+
+			if(this.hasAntidote) {
+				waterBarMaterial.color.setHex(0xff00ff);
+			}
 		} else {
 			damagedOpacity = 1;
-			spray.waterLevel = 0;
-			if(deadRotation < Math.PI/2) {
-				deadRotation+=(tick*deathFallSpeed);
-			}
-
-			bodyMesh.rotation.x = deadRotation;
-			headMesh.rotation.x = deadRotation;
-			gunMesh.rotation.x = deadRotation;
-			tankMesh.rotation.x = deadRotation;
 		}
-
-		healthMesh.scale.x = this.health;
-		healthMesh.visible = this.health > 0;
-		waterBarMesh.scale.x = spray.waterLevel;
-		waterLevel = spray.waterLevel;
-		waterBarMesh.visible = waterLevel > 0;
 	}
 
 	this.applyNextMove= function() {
 		this.position.copy(this.nextPosition);
 		headMesh.position.copy(this.position);
 		headMesh.position.y -= (bounce/2);
-		headMesh.position.y += 0.5
+		headMesh.position.y += 0.5;
 		bodyMesh.position.copy(this.position);
 		bodyMesh.position.y += bounce;
+
+		arrowMesh.position.copy(this.position);
 
 		if(this.health > 0) {
 			gunMesh.position.copy(this.position);
