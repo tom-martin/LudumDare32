@@ -20,8 +20,8 @@ function Spray(scene) {
 	var forwardX = new THREE.Vector3(1, 0, 0);
 
 	this.waterLevel = 1;
-	var waterLevelLossSpeed = 0.6;
-	var waterLevelGainSpeed = 0.1;
+	var waterLevelLossSpeed = 0.4;
+	var waterLevelGainSpeed = 0.2;
 	var waterLevelAntidoteBonus = 5;
 	var waterExpiredTime = 0;
 
@@ -54,6 +54,8 @@ function Spray(scene) {
 		}
 
 		if(this.spraying) {
+			spraySound.volume = 0.2;
+    		spraySound.play();
 			this.waterLevel -= tick*waterLevelLossSpeed;
 			if(this.waterLevel < 0) {
 				waterExpiredTime = now;
@@ -104,6 +106,8 @@ function Spray(scene) {
 				}
 			}
 		} else {
+			spraySound.pause();
+			spraySound.currentTime = 0;
 			var waterAddition = tick*waterLevelGainSpeed;
 			if(player.hasAntidote) {
 				waterAddition*=waterLevelAntidoteBonus;

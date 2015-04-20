@@ -97,6 +97,10 @@ function Npc(scene) {
 				bounceSpeed = -bounceSpeed;
 			}
 		}
+
+		if(!this.healed && Math.random() < 0.0001) {
+			playRandomSound(zombieSounds, 0.5+(Math.random()/2));
+		}
         
         if(age > maxAge && (!player.hasAntidote || diff.lengthSq()>300)) {
         	var chance = Math.random();
@@ -155,6 +159,10 @@ function Npc(scene) {
 	this.heal = function() {
 		if(!this.healed) {
 			this.healed = true;
+
+			if(Math.random() < 0.1) {
+				playRandomSound(zombieHealSounds, 1);
+			}
 
 			if(Math.random() < 0.2) {
 				npcHeadMaterial.map = healedHeadTexture3;

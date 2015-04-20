@@ -1,3 +1,6 @@
+var floorTexture = THREE.ImageUtils.loadTexture( "textures/floor.png" );
+floorTexture.magFilter = THREE.NearestFilter;
+
 var scene = null;
 var threeCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 1000 );
 
@@ -38,6 +41,35 @@ var npcSpeedAccumulation = 0;
 
 var unhealedNpc = null;
 
+var zombieSounds = [new Audio("../sounds/zombie1.ogg"),
+                    new Audio("../sounds/zombie2.ogg"),
+                    new Audio("../sounds/zombie3.ogg"),
+                    new Audio("../sounds/zombie4.ogg"),
+                    new Audio("../sounds/zombie5.ogg")];
+
+var zombieEatSounds = [new Audio("../sounds/zombieEat1.ogg"),
+                        new Audio("../sounds/zombieEat2.ogg"),
+                        new Audio("../sounds/zombieEat3.ogg")];
+
+var playerHurtSounds = [new Audio("../sounds/playerHurt1.ogg"),
+    new Audio("../sounds/playerHurt2.ogg"),
+    new Audio("../sounds/playerHurt3.ogg")];
+
+var zombieHealSounds = [new Audio("../sounds/zombieHeal1.ogg"),
+    new Audio("../sounds/zombieHeal2.ogg"),
+    new Audio("../sounds/zombieHeal3.ogg")];
+
+var spraySound = new Audio("../sounds/spray.ogg");
+
+var collectSounds = [new Audio("../sounds/collect.ogg")];
+
+
+var playRandomSound = function(audios, volume) {
+    var a = audios[Math.floor(Math.random() * audios.length)];
+    a.volume = volume;
+    a.play();
+}
+
 var init = function() {
     var dialog = document.getElementById("dialog");
     dialog.style.display = 'none';
@@ -74,30 +106,79 @@ var init = function() {
     spray = new Spray(scene);
 
     npcs = [];
-    for(var i = 0; i < 6; i++) {
+    for(var i = 0; i < 100; i++) {
         npcs.push(new Npc(scene));
     }
 
     buildings = [];
 
-    for(var x = -citySize-20; x <= citySize+40; x+=20) {
-        for(var z = -citySize-20; z <= citySize+40; z+=20) {
-            if(Math.random() < 0.50) {
+    var floorGeom = new THREE.Geometry();
+    floorGeom.faceVertexUvs[0] = [];
+    var vertIndex = 0;
+    var width = 0;
+    var height = 0;
+    for(var x = -citySize-60; x <= citySize+60; x+=20) {
+        width+=1;
+    }
+    for(var z = -citySize-60; z <= citySize+60; z+=20) {
+        height+=1;
+    }
+    
+    for(var z = -citySize-60; z <= citySize+60; z+=20) {
+        for(var x = -citySize-60; x <= citySize+60; x+=20) {
+            var buildingHere = false;
+            if(Math.random() < 0.50 && 
+                x > -citySize-40 && 
+                z >= -citySize-40 &&
+                x < citySize+60 && 
+                z < citySize+60) {
+                buildingHere = true;
                 buildings.push(new Building(x, z, 15, 15, scene));
             }
+
+            floorGeom.vertices.push(new THREE.Vector3(x+10, -1.25, z+10));
+
+            if(vertIndex > width && vertIndex % width > 0) {
+                floorGeom.faces.push( new THREE.Face3( vertIndex, vertIndex-width, vertIndex-(width+1)));
+                floorGeom.faces.push( new THREE.Face3( vertIndex, vertIndex-(width+1), vertIndex-1));
+
+                if(buildingHere) {
+                    floorGeom.faceVertexUvs[0].push([new THREE.Vector2(0.5, 0),new THREE.Vector2(0.5,0.5),new THREE.Vector2(0,0.5)]);
+                    floorGeom.faceVertexUvs[0].push([new THREE.Vector2(0.5, 0),new THREE.Vector2(0,0.5),new THREE.Vector2(0,0)]);
+                } else {
+                    var chance = Math.floor(Math.random()*3);
+                    if(chance == 2) {
+                        floorGeom.faceVertexUvs[0].push([new THREE.Vector2(1, 0),new THREE.Vector2(1,0.5),new THREE.Vector2(0.5,0.5)]);
+                        floorGeom.faceVertexUvs[0].push([new THREE.Vector2(1, 0),new THREE.Vector2(0.5,0.5),new THREE.Vector2(0.5,0)]);
+                    } else if(chance == 1) {
+                        floorGeom.faceVertexUvs[0].push([new THREE.Vector2(1, 0.5),new THREE.Vector2(1,1),new THREE.Vector2(0.5,1)]);
+                        floorGeom.faceVertexUvs[0].push([new THREE.Vector2(1, 0.5),new THREE.Vector2(0.5,1),new THREE.Vector2(0.5,0.5)]);    
+                    } else {
+                        floorGeom.faceVertexUvs[0].push([new THREE.Vector2(0.5, 0.5),new THREE.Vector2(0.5,1),new THREE.Vector2(0,1)]);
+                        floorGeom.faceVertexUvs[0].push([new THREE.Vector2(0.5, 0.5),new THREE.Vector2(0,1),new THREE.Vector2(0,0.5)]);
+                    }
+                }
+            }
+
+            vertIndex++;
         }
     }
 
-    antidote = new Antidote(citySize, scene);
+    floorGeom.computeFaceNormals();
+    var floorMaterial = new THREE.MeshLambertMaterial( {map: floorTexture} );
+    var floorMesh = new THREE.Mesh(floorGeom, floorMaterial);
+    scene.add(floorMesh);
 
-    for(var x = -citySize-25; x <= citySize+25; x+=50) {
-        buildings.push(new Building(x, -citySize-50, 50, 10, scene));
-        buildings.push(new Building(x, citySize+50, 50, 10, scene));
+    antidote = new Antidote(player.position, citySize, scene);
+
+    for(var x = -citySize-25; x <= citySize+25; x+=15) {
+        buildings.push(new Building(x, -citySize-50, 15, 15, scene));
+        buildings.push(new Building(x, citySize+50, 15, 15, scene));
     }
 
-    for(var z = -citySize-25; z <= citySize+25; z+=50) {
-        buildings.push(new Building(-citySize-50, z, 10, 50, scene));
-        buildings.push(new Building(citySize+50, z, 10, 50, scene));
+    for(var z = -citySize-25; z <= citySize+25; z+=15) {
+        buildings.push(new Building(-citySize-50, z, 15, 15, scene));
+        buildings.push(new Building(citySize+50, z, 15, 15, scene));
     }
 
     render();
@@ -115,7 +196,7 @@ function render() {
     var healedCount = 0;
 
     npcSpeedAccumulation += tick;
-    var npcSpeed = Math.min(5, 2+(npcSpeedAccumulation / 10));
+    var npcSpeed = Math.min(5, 2+(npcSpeedAccumulation / 15));
 
     nearestUnhealedNpc = null;
     var nearestUnhealedDistance = 100000;

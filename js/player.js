@@ -63,6 +63,17 @@ function Player(scene) {
 	var healthMesh = new THREE.Mesh( healthGeom,  healthMaterial);
 	scene.add( healthMesh );
 
+	var pickup1Material = new THREE.MeshLambertMaterial( {color: 0xffffff} );
+	var pickup2Material = new THREE.MeshLambertMaterial( {color: 0xffffff} );
+	var pickup3Material = new THREE.MeshLambertMaterial( {color: 0xffffff} );
+	var pickupGeom = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+	var pickup1Mesh = new THREE.Mesh( pickupGeom,  pickup1Material);
+	var pickup2Mesh = new THREE.Mesh( pickupGeom,  pickup2Material);
+	var pickup3Mesh = new THREE.Mesh( pickupGeom,  pickup3Material);
+	scene.add( pickup1Mesh );
+	scene.add( pickup2Mesh );
+	scene.add( pickup3Mesh );
+
 	var waterBarMaterial = new THREE.MeshLambertMaterial( {color: 0x00ffff} );
 	var waterBarGeom = new THREE.BoxGeometry(2, 0.2, 0.2);
 	var waterBarMesh = new THREE.Mesh( waterBarGeom,  waterBarMaterial);
@@ -86,7 +97,7 @@ function Player(scene) {
 	var maxArrowOpacity = 1;
 
 	this.health = 1;
-	var healthCost = 0.334;
+	var healthCost = 0.3333;
 	var lastDamageTime = 0;
 
 	var damagedOpacity = 1;
@@ -120,7 +131,7 @@ function Player(scene) {
 					}
 				}
 
-				if(now - lastDamageTime < 5000) {
+				if(now - lastDamageTime < 2500) {
 					damagedOpacity += tick * damagedOpacitySpeed;
 					if(damagedOpacity < -minDamageOpacity || damagedOpacity > maxDamageOpacity) {
 						damagedOpacity = Math.max(damagedOpacity, minDamageOpacity);
@@ -222,12 +233,41 @@ function Player(scene) {
 		waterBarMesh.position.copy(this.position);
 		waterBarMesh.position.y += 4.4;
 		waterBarMesh.position.x -= (1-waterLevel);
+
+		pickup1Mesh.position.copy(this.position);
+		pickup1Mesh.position.y += 4.8;
+		pickup1Mesh.position.x -= 0.83;
+
+		pickup2Mesh.position.copy(this.position);
+		pickup2Mesh.position.y += 4.8;
+		pickup2Mesh.position.x -= 0.5;
+
+		pickup3Mesh.position.copy(this.position);
+		pickup3Mesh.position.y += 4.8;
+		pickup3Mesh.position.x -= 0.17;
+	}
+
+	this.updatePickups = function() {
+		if(this.antidotesObtained >= 1) {
+			pickup1Material.color.setHex(0xff00ff);
+		}
+
+		if(this.antidotesObtained >= 2) {
+			pickup2Material.color.setHex(0xff00ff);
+		}
+
+		if(this.antidotesObtained >= 3) {
+			pickup3Material.color.setHex(0xff00ff);
+		}
 	}
 
 	this.takeDamage = function(now) {
-		if(now - lastDamageTime > 5000) {
+		if(now - lastDamageTime > 2500 && this.health > 0) {
 			lastDamageTime = now;
 			this.health -= healthCost;
+
+			playRandomSound(zombieEatSounds, 1);
+			playRandomSound(playerHurtSounds, 1);
 		}
 
 		if(this.health < healthCost) {
