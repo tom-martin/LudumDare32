@@ -10,6 +10,10 @@ renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+window.onresize = function(event) {
+    renderer.setSize( window.innerWidth, window.innerHeight );
+};
+
 var stats = new Stats();
 stats.setMode(0); // 0: fps, 1: ms
 
@@ -18,7 +22,7 @@ stats.domElement.style.position = 'absolute';
 stats.domElement.style.left = '0px';
 stats.domElement.style.top = '0px';
 
-document.body.appendChild( stats.domElement );
+// document.body.appendChild( stats.domElement );
 
 var lastFrameTime = Date.now();
 
@@ -41,27 +45,27 @@ var npcSpeedAccumulation = 0;
 
 var unhealedNpc = null;
 
-var zombieSounds = [new Audio("../sounds/zombie1.ogg"),
-                    new Audio("../sounds/zombie2.ogg"),
-                    new Audio("../sounds/zombie3.ogg"),
-                    new Audio("../sounds/zombie4.ogg"),
-                    new Audio("../sounds/zombie5.ogg")];
+var zombieSounds = [new Audio("sounds/zombie1.ogg"),
+                    new Audio("sounds/zombie2.ogg"),
+                    new Audio("sounds/zombie3.ogg"),
+                    new Audio("sounds/zombie4.ogg"),
+                    new Audio("sounds/zombie5.ogg")];
 
-var zombieEatSounds = [new Audio("../sounds/zombieEat1.ogg"),
-                        new Audio("../sounds/zombieEat2.ogg"),
-                        new Audio("../sounds/zombieEat3.ogg")];
+var zombieEatSounds = [new Audio("sounds/zombieEat1.ogg"),
+                        new Audio("sounds/zombieEat2.ogg"),
+                        new Audio("sounds/zombieEat3.ogg")];
 
-var playerHurtSounds = [new Audio("../sounds/playerHurt1.ogg"),
-    new Audio("../sounds/playerHurt2.ogg"),
-    new Audio("../sounds/playerHurt3.ogg")];
+var playerHurtSounds = [new Audio("sounds/playerHurt1.ogg"),
+    new Audio("sounds/playerHurt2.ogg"),
+    new Audio("sounds/playerHurt3.ogg")];
 
-var zombieHealSounds = [new Audio("../sounds/zombieHeal1.ogg"),
-    new Audio("../sounds/zombieHeal2.ogg"),
-    new Audio("../sounds/zombieHeal3.ogg")];
+var zombieHealSounds = [new Audio("sounds/zombieHeal1.ogg"),
+    new Audio("sounds/zombieHeal2.ogg"),
+    new Audio("sounds/zombieHeal3.ogg")];
 
-var spraySound = new Audio("../sounds/spray.ogg");
+var spraySound = new Audio("sounds/spray.ogg");
 
-var collectSounds = [new Audio("../sounds/collect.ogg")];
+var collectSounds = [new Audio("sounds/collect.ogg")];
 
 
 var playRandomSound = function(audios, volume) {
@@ -128,12 +132,12 @@ var init = function() {
         for(var x = -citySize-60; x <= citySize+60; x+=20) {
             var buildingHere = false;
             if(Math.random() < 0.50 && 
-                x > -citySize-40 && 
-                z >= -citySize-40 &&
+                x > -citySize-60 && 
+                z >= -citySize-60 &&
                 x < citySize+60 && 
                 z < citySize+60) {
                 buildingHere = true;
-                buildings.push(new Building(x, z, 15, 15, scene));
+                buildings.push(new Building(x, z, false, 15, 15, scene));
             }
 
             floorGeom.vertices.push(new THREE.Vector3(x+10, -1.25, z+10));
@@ -171,14 +175,14 @@ var init = function() {
 
     antidote = new Antidote(player.position, citySize, scene);
 
-    for(var x = -citySize-25; x <= citySize+25; x+=15) {
-        buildings.push(new Building(x, -citySize-50, 15, 15, scene));
-        buildings.push(new Building(x, citySize+50, 15, 15, scene));
+    for(var x = -citySize-60; x <= citySize+60; x+=15) {
+        buildings.push(new Building(x, -citySize-50, true, 15, 15, scene));
+        buildings.push(new Building(x, citySize+50, true, 15, 15, scene));
     }
 
-    for(var z = -citySize-25; z <= citySize+25; z+=15) {
-        buildings.push(new Building(-citySize-50, z, 15, 15, scene));
-        buildings.push(new Building(citySize+50, z, 15, 15, scene));
+    for(var z = -citySize-60; z <= citySize+60; z+=15) {
+        buildings.push(new Building(-citySize-50, z, true, 15, 15, scene));
+        buildings.push(new Building(citySize+50, z, true, 15, 15, scene));
     }
 
     render();

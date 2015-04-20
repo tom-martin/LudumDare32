@@ -5,6 +5,12 @@ var faceVertIndex = 0;
 gh.createBuildingGeom(buildingGeom, faceVertIndex, 7.5, 7.5, 7.5);
 buildingGeom.computeFaceNormals();
 
+var buildingGeomStretched = new THREE.Geometry();
+buildingGeomStretched.faceVertexUvs[0] = [];
+var faceVertIndex = 0;
+gh.createBuildingGeom(buildingGeomStretched, faceVertIndex, 7.5, 8, 7.5);
+buildingGeomStretched.computeFaceNormals();
+
 var buildingTexture1 = THREE.ImageUtils.loadTexture( "textures/building1.png" );
 buildingTexture1.magFilter = THREE.NearestFilter;
 
@@ -14,7 +20,7 @@ buildingTexture2.magFilter = THREE.NearestFilter;
 var buildingTexture3 = THREE.ImageUtils.loadTexture( "textures/building3.png" );
 buildingTexture3.magFilter = THREE.NearestFilter;
 
-function Building(x, z, width, depth, scene) {
+function Building(x, z, stretched, width, depth, scene) {
 	this.depth = depth;
 	this.width = width;
 
@@ -28,7 +34,11 @@ function Building(x, z, width, depth, scene) {
 
 	var buildingMaterial = new THREE.MeshLambertMaterial( {map: buildingTex, transparent: true, opacity: 1.0 } );
 
-	var mesh = new THREE.Mesh( buildingGeom, buildingMaterial );
+	var geom = buildingGeom;
+	if(stretched) {
+		geom = buildingGeomStretched;
+	}
+	var mesh = new THREE.Mesh( geom, buildingMaterial );
 	scene.add( mesh );
 	this.position = new THREE.Vector3(x, 0, z);
 	
